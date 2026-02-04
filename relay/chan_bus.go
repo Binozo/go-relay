@@ -71,7 +71,7 @@ func (c *ChanBus[T]) eventWorker() error {
 
 func (c *ChanBus[T]) Subscribe() Subscription[T] {
 	var subscription *ChanSubscription[T]
-	subscription = NewChanSubscription[T](c.subscriptionBackpressure, func() {
+	subscription = NewChanSubscription[T](SubWithContext(c.ctx), SubWithBackpressure(c.subscriptionBackpressure), SubWithUnsubscribeCallback(func() {
 		// Unsubscribe
 		subscription.Close()
 
@@ -93,7 +93,7 @@ func (c *ChanBus[T]) Subscribe() Subscription[T] {
 			},
 			TotalSubscriptions: len(c.subscriptions),
 		})
-	})
+	}))
 
 	c.subscriptionsLock.Lock()
 	defer c.subscriptionsLock.Unlock()
@@ -182,7 +182,7 @@ func (c *ChanBus[T]) subscribeToInternalEvents() Subscription[internalEvent] {
 	defer c.internalSubscriptionsLock.Unlock()
 
 	var sub *ChanSubscription[internalEvent]
-	sub = NewChanSubscription[internalEvent](0, func() {
+	sub = NewChanSubscription[internalEvent](SubWithContext(c.ctx), SubWithUnsubscribeCallback(func() {
 		c.internalSubscriptionsLock.Lock()
 		defer c.internalSubscriptionsLock.Unlock()
 
@@ -194,7 +194,7 @@ func (c *ChanBus[T]) subscribeToInternalEvents() Subscription[internalEvent] {
 		}
 
 		c.internalSubscriptions = newInternalSubscriptions
-	})
+	}))
 
 	c.internalSubscriptions = append(c.internalSubscriptions, sub)
 	return sub

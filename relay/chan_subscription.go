@@ -16,13 +16,22 @@ type ChanSubscription[T any] struct {
 	closed              bool
 }
 
-func NewChanSubscription[T any](backpressure int, unsubscribeCallback func()) *ChanSubscription[T] {
-	ctx, cancel := context.WithCancelCause(context.Background())
+func NewChanSubscription[T any](options ...ChanSubscriptionOption) *ChanSubscription[T] {
+	option := &chanSubscriptionConfig{
+		ctx:          context.Background(),
+		backpressure: 0,
+	}
+
+	for _, opt := range options {
+		opt(option)
+	}
+
+	ctx, cancel := context.WithCancelCause(option.ctx)
 
 	return &ChanSubscription[T]{
 		id:                  uuid.New().String(),
-		dataChan:            make(chan T, backpressure),
-		unsubscribeCallback: unsubscribeCallback,
+		dataChan:            make(chan T, option.backpressure),
+		unsubscribeCallback: option.unsubscribeCallback,
 		ctx:                 ctx,
 		cancel:              cancel,
 	}
@@ -59,7 +68,11 @@ func (c *ChanSubscription[T]) CancelError(err error) {
 }
 
 func (c *ChanSubscription[T]) Unsubscribe() {
-	c.unsubscribeCallback()
+	if c.unsubscribeCallback == nil {
+		c.unsubscribeCallback()
+	}
+
+	c.Close()
 }
 
 func (c *ChanSubscription[T]) Close() error {
