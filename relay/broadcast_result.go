@@ -15,6 +15,8 @@ func (b *BroadcastResult) Wait() error {
 		return nil
 	}
 
+	defer b.group.Stop() // Cancel context
+
 	return b.group.Wait()
 }
 
