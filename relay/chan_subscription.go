@@ -13,7 +13,6 @@ type ChanSubscription[T any] struct {
 	ctx                 context.Context
 	cancel              context.CancelCauseFunc
 	unsubscribeCallback func()
-	closed              bool
 }
 
 func NewChanSubscription[T any](options ...ChanSubscriptionOption) *ChanSubscription[T] {
@@ -76,12 +75,6 @@ func (c *ChanSubscription[T]) Unsubscribe() {
 }
 
 func (c *ChanSubscription[T]) Close() error {
-	if c.closed {
-		return nil
-	}
-
-	c.closed = true
 	c.cancel(fmt.Errorf("subscription closed"))
-	close(c.dataChan)
 	return nil
 }
