@@ -1,4 +1,4 @@
-package go_relay
+package relay
 
 import "context"
 
