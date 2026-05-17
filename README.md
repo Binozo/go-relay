@@ -1,7 +1,7 @@
 # Relay
 
 <p align="center">
-  <a href="https://pkg.go.dev/github.com/binozo/go-relay/relay"><img src="https://pkg.go.dev/badge/github.com/binozo/go-relay/relay.svg" alt="Go Reference"></a>
+  <a href="https://pkg.go.dev/github.com/binozo/go-relay"><img src="https://pkg.go.dev/badge/github.com/binozo/go-relay.svg" alt="Go Reference"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-blue.svg" alt="License"></a>
   <a href="https://go.dev/"><img src="https://img.shields.io/badge/go-%5E1.22-00ADD8?logo=go" alt="Go Version"></a>
 </p>
@@ -41,7 +41,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/binozo/go-relay/relay"
+	"github.com/binozo/go-relay"
 )
 
 func main() {
